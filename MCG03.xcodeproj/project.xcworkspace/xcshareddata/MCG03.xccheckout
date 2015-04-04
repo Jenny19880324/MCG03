@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B1388D0B-3677-4510-906B-1698540C53AC</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MCG03</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>998e7ced-1aea-5248-89cf-51f3f70024aa++505</key>
+		<string>https://cielquasar.me.cmu.edu/svn/particle_fluid_simulator/trunk</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>src/MCG03/MCG03.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>998e7ced-1aea-5248-89cf-51f3f70024aa++505</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>998e7ced-1aea-5248-89cf-51f3f70024aa++505</key>
+		<string>https://cielquasar.me.cmu.edu/svn/particle_fluid_simulator</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://cielquasar.me.cmu.edu/svn/particle_fluid_simulator/trunk/src/MCG03/MCG03.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>998e7ced-1aea-5248-89cf-51f3f70024aa++505</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>998e7ced-1aea-5248-89cf-51f3f70024aa++505</string>
+			<key>IDESourceControlWCCName</key>
+			<string>trunk</string>
+		</dict>
+	</array>
+</dict>
+</plist>

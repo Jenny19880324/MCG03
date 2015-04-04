@@ -1,0 +1,5 @@
+mass 10
+sigma 1000
+particle 1 2 3
+
+

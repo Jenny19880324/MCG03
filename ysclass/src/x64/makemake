@@ -1,0 +1,149 @@
+*REM A source file for MAKEMAKE.EXE
+*REM Variables  OBJ  -> Common object files
+*REM            OBJ1 -> Object files for TARGET 1
+*REM            OBJ2 -> Object files for TARGET 1
+*REM Compiler options must be set in CFLAGS variable
+
+
+
+*OBJDIR variable will be OBJDIR
+*REM Don't add slash or backslash at the end
+*REM   Wrong   C:\TMP\YSFLIGHT\
+*REM   Correct C:\TMP\YSFLIGHT
+C:\TMP\YSCLASS64
+
+
+
+
+*SRC
+*REM variables will be SRC0 OBJ0
+..\ysprintf.cpp
+..\ysclassmgr.cpp
+..\ysbase.cpp
+..\ysgeometry.cpp
+..\ysmath.cpp
+..\ysmatrix.cpp
+..\ysmatrix3x3.cpp
+..\ysmatrix4x4.cpp
+..\ysreldir.cpp
+..\ysargs.cpp
+..\ysadvgeometry.cpp
+..\yswizard.cpp
+..\ysproperty.cpp
+..\ysshellutil.cpp
+..\yssword.cpp
+..\ysequation.cpp
+..\ysadvgeometryx.cpp
+..\ysstring.cpp
+..\yspixelmap.cpp
+..\ysfilename.cpp
+..\ysshell2d.cpp
+..\ysclip.cpp
+..\ysshellsearch.cpp
+..\ysshellblend.cpp
+..\ysshelllattice.cpp
+..\yshash.cpp
+..\yskdtree.cpp
+..\yspredefined.cpp
+..\ysveci.cpp
+..\ysshellblend2.cpp
+..\ysexception.cpp
+..\yslist.cpp
+
+
+*SRC
+*REM variables will be SRC1 OBJ1
+..\ysshell.cpp
+..\ysshellstl.cpp
+
+
+*SRC
+*REM variables will be SRC2 OBJ2
+
+
+
+
+
+*MAKEFILETOP  // RAW MAKEFILE (INSERTED AT THE TOP)
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+# DON'T MODIFY THIS FILE DIRECTLY!!!!
+# INSTEAD, MODIFY "MAKEMAKE" AND USE "MAKEMAKE.EXE" TO RE-CREATE MAKEFILE!!!!
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+.SUFFIXES: .c .cpp .obj
+
+LIBEXE = lib.exe
+LIBFLAGS = /NOLOGO
+
+CC = cl.exe
+
+PROJECTNAME=YSCLASS64
+PDBFILE=$(PROJECTNAME).pdb
+PCHFILE=$(PROJECTNAME).pch
+
+CFLAGS=/nologo /W3 /GX /YX /Zi /O2 /G5 /D "WIN32" /D "_WINDOWS" /c /Fd$(OBJDIR)\$(PDBFILE) /Fp$(OBJDIR)\$(PCHFILE) /wd4996
+
+TARGET=$(PROJECTNAME).lib
+REALTARGET = $(USERLIBDIR)\$(TARGET)
+
+
+MV = mv
+CP = copy
+USERINCDIR = C:\INCLUDE
+USERLIBDIR = C:\LIB
+
+all : envCheck makefile $(REALTARGET)
+
+cln :
+	del $(OBJDIR)\*.obj
+	del $(OBJDIR)\*.lib
+
+makefile : makemake
+	makemake.exe
+	@echo "MAKEFILE IS REFRESHED.  RE-RUN NMAKE"
+
+inst :
+	$(CP) $(OBJDIR)\$(TARGET) $(USERLIBDIR)
+	$(CP) $(OBJDIR)\$(PDBFILE) $(USERLIBDIR)
+
+envCheck :
+	isAmd64env.exe
+
+
+*MAKEFILEMID  // RAW MAKEFILE (INSERTED AFTER SRCx=... , OBJx=... and OBJDIR=....)
+$(REALTARGET) : $(OBJDIR)/$(TARGET)
+		$(CP) $(OBJDIR)\$(PDBFILE) $(USERLIBDIR)
+		$(CP) $(OBJDIR)\$(TARGET) $(USERLIBDIR)
+
+$(OBJDIR)/$(TARGET) : $(OBJ0) $(OBJ1)
+		$(LIBEXE) @<<
+	$(LIBFLAGS) /OUT:"$(OBJDIR)/$(TARGET)" $(OBJ0) $(OBJ1)
+<<
+
+
+
+
+
+
+*MAKEFILEBTM  // RAW MAKEFILE (INSERTED AT THE BOTTOM)

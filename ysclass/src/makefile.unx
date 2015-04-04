@@ -1,0 +1,322 @@
+.SUFFIXES: .c .cpp .obj
+PROJECTNAME=ysclass
+SRC_ROOT=../..
+IS_LIBRARY_PROJECT=1
+OWN_HEADER_PATH=
+DEPEND_ON=
+
+
+
+# {
+# YS Standard Makefile Header for Unix and MacOSX 20140801 >>
+#
+# Variable PROJECTNAME and SRC_ROOT must be defined before the header.
+#
+
+# Self-memo: $* $> $@ etc are officially (?) called 'automatic variables'
+# Self-memo: $(lastword $(MAKEFILE_LIST)) will give the current makefile name
+
+
+# Identifying compiler >>
+# Priority is given to clang over g++
+TESTCLANG:=$(shell which clang 1> /dev/null; echo $$?)
+TESTGPP:=$(shell which g++ 1> /dev/null; echo $$?)
+
+ifeq ($(TESTCLANG),0)
+CC=clang
+else ifeq ($(TESTGPP),0)
+CC=g++
+else
+$(error C++ Compiler not found.)
+endif
+# Identifying compiler >>
+
+
+RM=rm
+MD=mkdir
+CP=cp
+INCOPT=-I
+LIBPREFIX=lib
+LIBEXT=.a
+CPPFLAGS=-std=c++0x
+MAKEEXE=make
+C_OPTION_AVAILABLE=1
+SLASH=/
+CHAIN=;
+
+BITNESSTESTSRC=ysbitnesstest.cpp
+BITNESSTESTEXE=ysbitnesstest
+
+ifndef PROJECTNAME
+$(error Variable PROJECTNAME not defined.)
+endif
+ifndef SRC_ROOT
+$(error Variable SRC_ROOT not defined.)
+endif
+ifndef IS_LIBRARY_PROJECT
+$(error Variable IS_LIBRARY_PROJECT not defined.)
+endif
+
+
+ifndef YS_BITNESS
+GENSRC:=$(shell echo 'int main(void){printf("%d",8*(int)sizeof(void *));return 0;} ' 1> $(BITNESSTESTSRC))
+BITNESSCOMPILE:=$(shell g++ $(BITNESSTESTSRC) -o $(BITNESSTESTEXE) -include stdio.h)
+SIZEOFPOINTER:=$(shell ./$(BITNESSTESTEXE))
+YS_BITNESS:=$(SIZEOFPOINTER)
+CLEANTEMPORARYCPP:=$(shell rm $(BITNESSTESTSRC) $(BITNESSTESTEXE))
+endif
+
+ifeq ($(YS_BITNESS),32)
+  CBITNESSFLAG=-m32
+else
+  ifeq ($(YS_BITNESS),64)
+    CBITNESSFLAG=-m64
+  endif
+endif
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Linux)
+PLATFORM=linux
+PLATFORMSHORT=unx
+PLATFORMLIB=$(X11LIB) -lGLU -lGL
+APPDIR=.
+APPDIRSIGNATURE=
+APPDIRSIGNATURERULE=dummyRule
+OBJSIMPLEWIN=$(OBJDIR)/fsglxwrapper.o $(OBJDIR)/fsglxkeymap.o
+endif
+
+ifeq ($(UNAME), Darwin)
+PLATFORM=macosx
+PLATFORMSHORT=mac
+PLATFORMLIB=-framework Cocoa -framework OpenGL
+APPDIR=$(PROJECTNAME).app/Contents/MacOS
+APPDIRSIGNATURE=$(APPDIR)/signature
+APPDIRSIGNATURERULE=$(APPDIRSIGNATURE)
+OBJSIMPLEWIN=$(OBJDIR)/fsmacosxwrapperobjc.o $(OBJDIR)/fsmacosxwrappercpp.o
+ifeq ($(IS_LIBRARY_PROJECT),0)
+MAKEBUNDLEDIR:=$(shell mkdir -p $(APPDIR))
+endif
+endif
+
+ifndef YSBIN_ROOT
+YSBIN_ROOT=$(HOME)/ysbin
+endif
+
+YSOBJ_ROOT=$(YSBIN_ROOT)/$(PLATFORM)$(YS_BITNESS)/obj
+USERLIBDIR=$(YSBIN_ROOT)/$(PLATFORM)$(YS_BITNESS)/lib
+
+OBJDIR=$(YSOBJ_ROOT)/$(PROJECTNAME)
+LIBDIR=$(USERLIBDIR)
+BINDIR=./bin/$(PLATFORM)$(YS_BITNESS)
+MAKEFILE=$(lastword $(MAKEFILE_LIST))
+#
+# YS Standard Makefile Header for Unix and MacOSX <<
+# }
+
+
+
+TARGET=$(LIBDIR)/lib$(PROJECTNAME).a
+INCLUDE=.
+
+
+#ifeq ($(TESTCLANG),0)
+OMPSWITCH=
+OMPOBJ=ysshelllattice_singleThread.o
+#else
+#OMPSWITCH=-fopenmp
+#OMPOBJ=ysshelllattice_openmp.o
+#endif
+
+
+ADDITIONAL_INCLUDE_PATH=
+
+ADDITIONAL_LIBRARIES=
+
+CPP=$(CC)
+CFLAGS = -c -O3 $(CBITNESSFLAG) $(OMPSWITCH) $(ADDITIONAL_INCLUDE_PATH)
+#-Wall gives a warning when member variable may not be initialized.
+#-m32 to force 32-bit executable
+
+# .IGNORE:
+
+HEADERS=ysadvgeometry.h ysargs.h ysarray.h ysbase.h ysbinarytree.h ysclass.h ysclassmgr.h ysclip.h ysdef.h ysedgeloop.h ysequation.h ysexception.h ysfilename.h ysgeometry.h yshash_.h yshash.h yskdtree.h yskeyword.h yslattice.h yslist2.h yslist.h ysmalloc.h ysmath.h ysmatrix.h ysmatrixtemplate.h ysneverforget.h ysoctree.h yspixelmap.h yspositivevector.h yspredefined.h ysprintf.h ysproperty.h ysreldir.h yssegarray.h ysshell2d.h ysshellblend2.h ysshell.h ysshellkdtree.h ysshelllattice.h ysshelloctree.h ysshellsearch.h ysshelltype.h ysshellutil.h yssort.h ysstring.h ystempobj.h ystextresource.h ystextstream.h ystightarray.h ysunitconv.h ysveci.h ysvectorhistogram.h yswizard.h ysviewcontrol.h
+
+
+
+OBJS=$(OBJDIR)/yslist.o $(OBJDIR)/ysprintf.o $(OBJDIR)/ysclassmgr.o $(OBJDIR)/ysbase.o $(OBJDIR)/ysgeometry.o $(OBJDIR)/ysmath.o $(OBJDIR)/ysmatrix.o $(OBJDIR)/ysmatrix3x3.o $(OBJDIR)/ysmatrix4x4.o $(OBJDIR)/ysreldir.o $(OBJDIR)/ysargs.o $(OBJDIR)/ysadvgeometry.o $(OBJDIR)/yswizard.o $(OBJDIR)/ysproperty.o $(OBJDIR)/ysshellutil.o $(OBJDIR)/ysshellfileio.o $(OBJDIR)/yssword.o $(OBJDIR)/ysequation.o $(OBJDIR)/ysadvgeometryx.o $(OBJDIR)/ysstring.o $(OBJDIR)/yspixelmap.o $(OBJDIR)/ysfilename.o $(OBJDIR)/ysshell2d.o $(OBJDIR)/ysclip.o $(OBJDIR)/ysshellsearch.o $(OBJDIR)/ysshellblend.o $(OBJDIR)/ysshelllattice.o $(OBJDIR)/$(OMPOBJ) $(OBJDIR)/yshash.o $(OBJDIR)/yskdtree.o $(OBJDIR)/yspredefined.o $(OBJDIR)/ysveci.o $(OBJDIR)/ysshellblend2.o $(OBJDIR)/ysshell.o $(OBJDIR)/ysshellstl.o $(OBJDIR)/ysexception.o $(OBJDIR)/ystextstream.o $(OBJDIR)/yspositivevector.o $(OBJDIR)/yskeyword.o $(OBJDIR)/ystextresource.o $(OBJDIR)/ysviewcontrol.o  $(OBJDIR)/ysbase64.o
+
+#$(OBJDIR)/ystask.o
+
+
+
+all : dependencies $(TARGET)
+
+targetonly : $(TARGET)
+
+dependencies :
+
+clean_dependencies :
+
+clean_self :
+	rm -f $(OBJS)
+	rm -f $(TARGET)
+
+$(TARGET) : $(OBJDIR)/signature $(LIBDIR)/signature $(HEADERS) $(OBJS)
+	ar cru $(TARGET) $(OBJS)
+	ranlib $(TARGET)
+
+rebuild :
+	$(MAKE) -f makefile.unx cln
+	$(MAKE) -f makefile.unx $(TARGET)
+
+cln : clean_self
+
+$(OBJDIR)/signature :
+	mkdir -p $(OBJDIR)
+	echo signature > $@
+
+$(LIBDIR)/signature :
+	mkdir -p $(LIBDIR)
+	echo signature > $@
+
+#.c.o:
+#	$(CC) $(CFLAGS) $*.c
+#
+#.cpp.o:
+#	$(CPP) $(CFLAGS) $*.cpp
+#
+
+$(OBJDIR)/yslist.o : yslist.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysprintf.o : ysprintf.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysclassmgr.o : ysclassmgr.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysbase.o : ysbase.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysgeometry.o : ysgeometry.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysmath.o : ysmath.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysmatrix.o : ysmatrix.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysmatrix3x3.o : ysmatrix3x3.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysmatrix4x4.o : ysmatrix4x4.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysreldir.o : ysreldir.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysargs.o : ysargs.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysadvgeometry.o : ysadvgeometry.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yswizard.o : yswizard.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysproperty.o : ysproperty.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshellutil.o : ysshellutil.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshellfileio.o : ysshellfileio.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yssword.o : yssword.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysequation.o : ysequation.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysadvgeometryx.o : ysadvgeometryx.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysstring.o : ysstring.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yspixelmap.o : yspixelmap.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysfilename.o : ysfilename.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshell2d.o : ysshell2d.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysclip.o : ysclip.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshellsearch.o : ysshellsearch.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshellblend.o : ysshellblend.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshelllattice.o : ysshelllattice.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+# Choose one of ysshelllattice_openmp.o or ysshelllattice_singleThread.o
+$(OBJDIR)/ysshelllattice_openmp.o : ysshelllattice_openmp.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshelllattice_singleThread.o : ysshelllattice_singleThread.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yshash.o : yshash.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yskdtree.o : yskdtree.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yspredefined.o : yspredefined.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysveci.o : ysveci.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshellblend2.o : ysshellblend2.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshell.o : ysshell.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysshellstl.o : ysshellstl.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysexception.o : ysexception.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ystextstream.o : ystextstream.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yspositivevector.o : yspositivevector.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/yskeyword.o : yskeyword.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ystextresource.o : ystextresource.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+$(OBJDIR)/ysviewcontrol.o : ysviewcontrol.cpp
+	$(CC) $? $(CPPFLAGS) $(CFLAGS) -o $@
+
+
+$(OBJDIR)/ystask.o : ystask.cpp
+	$(CC) ystask.cpp $(CPPFLAGS) $(CFLAGS) -o $(OBJDIR)/ystask.o
+
+$(OBJDIR)/ysbase64.o : ysbase64.cpp
+	$(CC) ysbase64.cpp $(CPPFLAGS) $(CFLAGS) -o $(OBJDIR)/ysbase64.o
